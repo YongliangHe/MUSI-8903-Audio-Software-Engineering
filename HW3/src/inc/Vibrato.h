@@ -15,9 +15,18 @@ class CRingBuffer;
 class CVibrato
 {
 public:
+    /*! processes one block of audio
+     \param ppfInputBuffer: input buffer [numChannels][iNumberOfFrames]
+     \param ppfOutputBuffer: output buffer [numChannels][iNumberOfFrames]
+     \param iNumberOfFrames buffer length (per channel)
+     \return Error_t
+     */
 
 private:
-    CLfo lfo;
+    CLfo *m_pCLfo;
+    CRingBuffer<float> *m_pCRingBuffer;
+    
+    float m_fSampleRate;
 };
 
 #endif // #if !defined(__Vibrato_hdr__)

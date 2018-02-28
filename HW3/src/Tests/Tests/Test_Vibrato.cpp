@@ -84,13 +84,13 @@ SUITE(LFO)
         
         for (int i = 0; i < iNumChannels; i++) {
             CHECK_ARRAY_CLOSE(pfSigToCompare, m_fBufferToFill[i], iNumFrames, 1e-4);
-            std::cout << pfSigToCompare[i] << "!!!!!!!!!!" << std::endl;
         }
         
         
-        //! checks the interpolation case with a random Fs and desired frequency and no reset (not changing Fs)
+        //! checks the interpolation case with a random Fs and desired frequency and calling reset
         CSynthesis::generateSine(pfSigToCompare, iRandomDesiredFrequency, iSampleRateForUnitInc, iBufferLength);
-        m_pCLfo->setFrequency(iRandomDesiredFrequency);
+        m_pCLfo->reset();
+        m_pCLfo->init(CLfo::kSine, iRandomDesiredFrequency, iSampleRateForUnitInc);
         m_pCLfo->generateNextAudioBlock(m_fBufferToFill, iNumChannels, iNumFrames);
         for (int i = 0; i < iNumChannels; i++) {
             CHECK_ARRAY_CLOSE(pfSigToCompare, m_fBufferToFill[i], iNumFrames, 1e-4);
@@ -103,6 +103,13 @@ SUITE(LFO)
         m_pCLfo->generateNextAudioBlock(m_fBufferToFill, iNumChannels, iNumFrames);
         for (int i = 0; i < iNumChannels; i++) {
             CHECK_ARRAY_CLOSE(pfSigToCompare, m_fBufferToFill[i], iNumFrames, 1e-4);
+        }
+        
+        
+        //! successively processing
+        m_pCLfo->generateNextAudioBlock(m_fBufferToFill, iNumChannels, iNumFrames);
+        for (int i = 0; i < iNumChannels; i++) {
+            CHECK_ARRAY_CLOSE(pfSigToCompare + iNumFrames, m_fBufferToFill[i], iNumFrames, 1e-4);
         }
         
         

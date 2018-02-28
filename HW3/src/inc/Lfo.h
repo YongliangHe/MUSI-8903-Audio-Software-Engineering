@@ -7,7 +7,6 @@
 #include "ErrorDef.h"
 #include "Synthesis.h"
 #include "RingBuffer.h"
-#include <iostream>
 
 class CLfo
 {
@@ -74,6 +73,7 @@ private:
     
 //    float m_iIncInSample;   //!< increment value used to skip through the buffer per sample
     float m_fFrequency;
+    float m_fCurrentPhaseInSample;  //!< store the current phase for the ring buffer
     
     double m_dSampleRate;
     
@@ -119,10 +119,10 @@ Error_t CLfo::reset()
     delete m_pCRingbuffer;
     m_pCRingbuffer = 0;
     
-//    m_iIncInSample = 0;
     m_fFrequency = 0;
     m_bIsInitialized = false;
     m_dSampleRate = 0;
+    m_fCurrentPhaseInSample = 0;
     return kNoError;
 }
 
@@ -144,8 +144,8 @@ CLfo::~CLfo()
 //==========================================================
 CLfo::CLfo():
     m_bIsInitialized(false),
-//    m_iIncInSample(0),
     m_fFrequency(0),
+    m_fCurrentPhaseInSample(0),
     m_dSampleRate(0),
     m_pCRingbuffer(0)
 {}
@@ -197,11 +197,11 @@ Error_t CLfo::generateNextAudioBlock(float **ppfBufferToFill, int iNumChannels, 
     
 
     float fIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
-    for (int i = 0; i < iNumChannels; i++) {
-        for (int j = 0; j < iNumberOfFrames; j++) {
-            
-            ppfBufferToFill[i][j] = m_pCRingbuffer->get(j * fIncInSample);
+    for (int i = 0; i < iNumberOfFrames; i++) {
+        for (int j = 0; j < iNumChannels; j++) {
+            ppfBufferToFill[j][i] = m_pCRingbuffer->get(m_fCurrentPhaseInSample);
         }
+        m_fCurrentPhaseInSample += fIncInSample;
     }
     
     return kNoError;
