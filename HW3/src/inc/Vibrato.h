@@ -2,7 +2,7 @@
 #define __Vibrato_hdr__
 
 #include "ErrorDef.h"
-
+#include "Lfo.h"
 // forward declaration
 class CLfo;
 template <class T>
@@ -17,7 +17,7 @@ class CVibrato
 public:
 
 private:
-
+    CLfo lfo;
 };
 
 #endif // #if !defined(__Vibrato_hdr__)
