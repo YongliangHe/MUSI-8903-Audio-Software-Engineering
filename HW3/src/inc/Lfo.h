@@ -6,7 +6,6 @@
 //
 #include "ErrorDef.h"
 #include "Synthesis.h"
-
 #include "RingBuffer.h"
 
 class CLfo
@@ -97,10 +96,9 @@ Error_t CLfo::create(CLfo *&pCLfo)
 {
     //! in case memory leakage caused by multiple calling to the function
     
-    //! however the program will crash with if condition. have not figured out why???
-//    if (!pCLfo) {
+    if (!pCLfo) {
         pCLfo = new CLfo;
-//    }
+    }
 
     if (!pCLfo) {
         return kUnknownError;

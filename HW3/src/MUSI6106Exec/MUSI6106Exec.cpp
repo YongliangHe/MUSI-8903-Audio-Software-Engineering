@@ -112,12 +112,12 @@ int main(int argc, char* argv[])
         delete[] ppfAudioData[i];
     delete[] ppfAudioData;
     ppfAudioData = 0;
+    
+    CVibrato::destroy(pCVibrato);
 
     return 0;
 
 }
-
-
 void     showClInfo()
 {
     cout << "GTCMT MUSI6106 Executable" << endl;

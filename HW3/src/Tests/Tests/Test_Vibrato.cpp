@@ -11,7 +11,6 @@
 #include "Synthesis.h"
 #include "Vector.h"
 #include "ErrorDef.h"
-
 #include "Vibrato.h"
 //#include "Lfo.h"
 
@@ -21,16 +20,14 @@
 //        LFOData()
 //        {
 //            CLfo::create(m_pCLfo);
-//
 //        }
 //
 //        ~LFOData()
 //        {
 //            CLfo::destroy(m_pCLfo);
-//
 //        }
 //
-//        CLfo *m_pCLfo;
+//        CLfo *m_pCLfo = 0;
 //        float **m_fBufferToFill;
 //    };
 //
@@ -210,7 +207,7 @@ SUITE(Vibrato)
             }
             return ppRes;
         }
-        
+
         void deleteTwoDimensionalArray(float **ppArrayToDelete, int iNumchannels, int iNumFrames)
         {
             for (int i = 0; i < iNumchannels; i++) {
@@ -283,9 +280,9 @@ SUITE(Vibrato)
         m_pCVibrato->setParam(CVibrato::kAmplitude, 1);
         CHECK_EQUAL(1, m_pCVibrato->getParam(CVibrato::kAmplitude));
     }
-    
+
     /////////////////////////////////////////////////////////////////
-    
+
     //! below are some tests for the algorithms
     TEST_FIXTURE(VibratoData, TestZeroAmplitude)
     {
@@ -294,17 +291,17 @@ SUITE(Vibrato)
         const float fModFrequency = 10;
         const float fAmplitude = 0;
         const int iSignalLengthInSample = 123;
-        
+
         //! this is what in the implementation
         const float fDelayFactor = 0.0003;
 //        const float fDelayFactor = 0.5;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
-        
+
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
-        
+
         float **ppInput = newTwoDimensionalArray(iNumChannels, iSignalLengthInSample);
         float **ppOutput = newTwoDimensionalArray(iNumChannels, iSignalLengthInSample);
-        
+
         for (int i = 0; i < iNumChannels; i++) {
             ppInput[i][0] = 10;
             ppInput[i][1] = 20;
@@ -327,7 +324,7 @@ SUITE(Vibrato)
             }
         }
     }
-    
+
     TEST_FIXTURE(VibratoData, TestDC)
     {
         const float fSampleRate = 100;
@@ -335,12 +332,12 @@ SUITE(Vibrato)
         const float fModFrequency = 20;
         const float fAmplitude = 0.2;
         const int iSignalLengthInSample = 200;
-        
+
         //! this is what in the implementation
         const float fDelayFactor = 0.0003;
 //        const float fDelayFactor = 0.5;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
-        
+
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
 
         float **ppInput = newTwoDimensionalArray(iNumChannels, iSignalLengthInSample);
@@ -350,7 +347,7 @@ SUITE(Vibrato)
                 ppInput[i][j] = 1;
             }
         }
-        
+
         //! the expected value after the delay line is filled up
         m_pCVibrato->process(ppInput, ppOutput, iSignalLengthInSample);
         for (int i = 2 * iDelayInSample + 1; i < iSignalLengthInSample; i++) {
@@ -359,7 +356,7 @@ SUITE(Vibrato)
             }
         }
     }
-    
+
     TEST_FIXTURE(VibratoData, TestVaringInputBlockSize)
     {
         const int iSize1 = 22;
@@ -368,23 +365,23 @@ SUITE(Vibrato)
         const float fSampleRate = 13;
         const float fModeFrequency = 2;
         const float fAmplitude = 0;
-        
+
         const float fDelayFactor = 0.0003;
 //        const float fDelayFactor = 0.5;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
-        
+
         float **ppInput1 = newTwoDimensionalArray(iNumChannels, iSize1);
         float **ppOutput1 = newTwoDimensionalArray(iNumChannels, iSize1);
         float **ppInput2 = newTwoDimensionalArray(iNumChannels, iSize2);
         float **ppOutput2 = newTwoDimensionalArray(iNumChannels, iSize2);
-        
+
         m_pCVibrato->init(fSampleRate, iNumChannels, fModeFrequency, fAmplitude);
         //! initialization
         ppInput1[1][0] = 111;
         ppInput1[3][0] = 333;
         ppInput2[2][0] = 22;
         ppInput2[0][0] = 44;
-        
+
         m_pCVibrato->process(ppInput1, ppOutput1, iSize1);
         for (int i = 0; i < iDelayInSample; i++) {
             for (int j = 0; j < iNumChannels; j++) {
@@ -401,8 +398,8 @@ SUITE(Vibrato)
                 CHECK_EQUAL(0, ppOutput1[j][i]);
             }
         }
-        
-        
+
+
         //! change the input block size
         m_pCVibrato->process(ppInput2, ppOutput2, iSize2);
         for (int i = 0; i < iDelayInSample; i++) {
@@ -421,7 +418,7 @@ SUITE(Vibrato)
             }
         }
     }
-    
+
     TEST_FIXTURE(VibratoData, TestZeroInput)
     {
         const int fSampleRate = 7654;
@@ -429,12 +426,12 @@ SUITE(Vibrato)
         const float fModFrequency = 1112;
         const float fAmplitude = 1;
         const int iSignalLengthInSample = 12345;
-        
+
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
-        
+
         float **ppInput = newTwoDimensionalArray(iNumChannels, iSignalLengthInSample);
         float **ppOutput = newTwoDimensionalArray(iNumChannels, iSignalLengthInSample);
-        
+
         m_pCVibrato->process(ppInput, ppOutput, iSignalLengthInSample);
         for (int i = 0; i < iSignalLengthInSample; i++) {
             for (int j = 0; j < iNumChannels; j++) {

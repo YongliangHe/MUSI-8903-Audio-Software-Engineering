@@ -2,8 +2,6 @@
 #define __Vibrato_hdr__
 
 #include "ErrorDef.h"
-//#include "Lfo.h"
-//#include "RingBuffer.h"
 
 // forward declaration
 class CLfo;

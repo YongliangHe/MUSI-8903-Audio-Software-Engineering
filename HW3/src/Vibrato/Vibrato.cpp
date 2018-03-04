@@ -4,11 +4,8 @@
 // project headers
 #include <limits>
 #include "MUSI6106Config.h"
-
 #include "ErrorDef.h"
-
 #include "RingBuffer.h"
-
 #include "Vibrato.h"
 #include "Lfo.h"
 
