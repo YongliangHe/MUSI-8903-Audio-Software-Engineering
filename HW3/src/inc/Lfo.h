@@ -2,10 +2,11 @@
 #define __Lfo_hdr__
 
 #define _USE_MATH_DEFINES
-#include <math.h>
-
+//#include <math.h>
+//
 #include "ErrorDef.h"
 #include "Synthesis.h"
+
 #include "RingBuffer.h"
 
 class CLfo
@@ -61,6 +62,11 @@ public:
      \return Error_t
      */
     Error_t generateNextAudioBlock (float **ppfBufferToFill, int iNumChannels, int iNumberOfFrames);
+    
+    /*! generates next value
+     \return float
+     */
+    float generateNextValue();
 
 private:
     
@@ -73,6 +79,7 @@ private:
     
 //    float m_iIncInSample;   //!< increment value used to skip through the buffer per sample
     float m_fFrequency;
+    float m_fIncInSample;
     float m_fCurrentPhaseInSample;  //!< store the current phase for the ring buffer
     
     double m_dSampleRate;
@@ -89,8 +96,13 @@ private:
 
 Error_t CLfo::create(CLfo *&pCLfo)
 {
-    pCLfo = new CLfo;
+    //! in case memory leakage caused by multiple calling to the function
     
+    //! however the program will crash with if condition. have not figured out why???
+//    if (!pCLfo) {
+        pCLfo = new CLfo;
+//    }
+
     if (!pCLfo) {
         return kUnknownError;
     }
@@ -104,7 +116,8 @@ Error_t CLfo::destroy(CLfo *&pCLfo)
         return kUnknownError;
     }
     
-    pCLfo->reset();
+    //! it seems these is no need to reset here because destructor will do this
+//    pCLfo->reset();
     
     delete pCLfo;
     pCLfo = 0;
@@ -120,6 +133,7 @@ Error_t CLfo::reset()
     m_pCRingbuffer = 0;
     
     m_fFrequency = 0;
+    m_fIncInSample = 0;
     m_bIsInitialized = false;
     m_dSampleRate = 0;
     m_fCurrentPhaseInSample = 0;
@@ -145,6 +159,7 @@ CLfo::~CLfo()
 CLfo::CLfo():
     m_bIsInitialized(false),
     m_fFrequency(0),
+    m_fIncInSample(0),
     m_fCurrentPhaseInSample(0),
     m_dSampleRate(0),
     m_pCRingbuffer(0)
@@ -161,7 +176,9 @@ Error_t CLfo::setFrequency(float fFrequency)
         return kFunctionInvalidArgsError;
     }
     m_fFrequency = fFrequency;
-//    m_iIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
+    
+    m_fIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
+    
     return kNoError;
 }
 
@@ -176,7 +193,9 @@ Error_t CLfo::init(Waveform eWaveform, float fFrequency, double dSampleRate)
     }
     
     m_dSampleRate = dSampleRate;
+    
     m_fFrequency = fFrequency;
+    m_fIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
     
     m_pCRingbuffer = new CRingBuffer<float>(BUFFER_LENGTH);
 
@@ -196,17 +215,39 @@ Error_t CLfo::generateNextAudioBlock(float **ppfBufferToFill, int iNumChannels, 
     }
     
 
-    float fIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
+//    float fIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
     for (int i = 0; i < iNumberOfFrames; i++) {
         for (int j = 0; j < iNumChannels; j++) {
             ppfBufferToFill[j][i] = m_pCRingbuffer->get(m_fCurrentPhaseInSample);
         }
-        m_fCurrentPhaseInSample += fIncInSample;
+        m_fCurrentPhaseInSample += m_fIncInSample;
+        
+        if (m_fCurrentPhaseInSample > BUFFER_LENGTH - 1) {
+            m_fCurrentPhaseInSample -= BUFFER_LENGTH;
+        }
     }
     
     return kNoError;
 }
 
+
+//==========================================================
+float CLfo::generateNextValue()
+{
+    if (!m_bIsInitialized) {
+        return kNotInitializedError;
+    }
+    
+    float fRes = m_pCRingbuffer->get(m_fCurrentPhaseInSample);
+    
+    m_fCurrentPhaseInSample += m_fIncInSample;
+    
+    if (m_fCurrentPhaseInSample > BUFFER_LENGTH - 1) {
+        m_fCurrentPhaseInSample -= BUFFER_LENGTH;
+    }
+    
+    return fRes;
+}
 //!==========================================================
 //! private function definitions
 void CLfo::writeWaveformToBuffer(Waveform eWaveform)

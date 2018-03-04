@@ -5,6 +5,8 @@
 #include "MUSI6106Config.h"
 
 #include "AudioFileIf.h"
+#include "Vibrato.h"
+#include "Lfo.h"
 
 using std::cout;
 using std::endl;
@@ -30,7 +32,9 @@ int main(int argc, char* argv[])
     CAudioFileIf::FileSpec_t stFileSpec;
 
     showClInfo();
-
+    
+    
+    //=============================
     //////////////////////////////////////////////////////////////////////////////
     // parse command line arguments
     if (argc < 2)
