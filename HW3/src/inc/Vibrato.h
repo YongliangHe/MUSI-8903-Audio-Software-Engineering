@@ -90,7 +90,10 @@ private:
      *  since the pitch shift is the difference of the delay length,
      *  this factor used to compute the delay line length
      */
+    
+//    both 0.0003 and 0.5 get tested, 0.0003 is better from a perception perspective and 0.5 is better from a test perspective (0.5 will result in a bigger delay length). In practice 0.0003 should be used in order to get a good vibrato effect
     const float delayFactor = 0.0003;
+//    const float delayFactor = 0.5;
     
     
     bool m_bIsInitialized;  //!< internal bool to check whether the init function has been called

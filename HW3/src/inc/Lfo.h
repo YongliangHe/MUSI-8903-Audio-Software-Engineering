@@ -77,7 +77,6 @@ private:
 
     bool m_bIsInitialized;
     
-//    float m_iIncInSample;   //!< increment value used to skip through the buffer per sample
     float m_fFrequency;
     float m_fIncInSample;
     float m_fCurrentPhaseInSample;  //!< store the current phase for the ring buffer
@@ -115,10 +114,6 @@ Error_t CLfo::destroy(CLfo *&pCLfo)
     if (!pCLfo) {
         return kUnknownError;
     }
-    
-    //! it seems these is no need to reset here because destructor will do this
-//    pCLfo->reset();
-    
     delete pCLfo;
     pCLfo = 0;
     
@@ -215,7 +210,6 @@ Error_t CLfo::generateNextAudioBlock(float **ppfBufferToFill, int iNumChannels, 
     }
     
 
-//    float fIncInSample = BUFFER_LENGTH / m_dSampleRate * m_fFrequency;
     for (int i = 0; i < iNumberOfFrames; i++) {
         for (int j = 0; j < iNumChannels; j++) {
             ppfBufferToFill[j][i] = m_pCRingbuffer->get(m_fCurrentPhaseInSample);

@@ -260,7 +260,6 @@ SUITE(Vibrato)
 
     TEST_FIXTURE(VibratoData, TestGetParam)
     {
-//        m_pCVibrato->init(44100, 2, 10, 0.5);
         m_pCVibrato->init(44100, 2, 0, 0);
         CHECK_EQUAL(0, m_pCVibrato->getParam(CVibrato::kModulationFrequency));
         m_pCVibrato->setParam(CVibrato::kModulationFrequency, 10);
@@ -285,21 +284,20 @@ SUITE(Vibrato)
         CHECK_EQUAL(1, m_pCVibrato->getParam(CVibrato::kAmplitude));
     }
     
+    /////////////////////////////////////////////////////////////////
+    
     //! below are some tests for the algorithms
     TEST_FIXTURE(VibratoData, TestZeroAmplitude)
     {
-//        const float fSampleRate = 542;
         const float fSampleRate = 100;
         const int iNumChannels = 1;
-//        const int iNumChannels = 1;
-//        const float fModFrequency = 111;
         const float fModFrequency = 10;
         const float fAmplitude = 0;
-//        const int iSignalLengthInSample = 22;
         const int iSignalLengthInSample = 123;
         
         //! this is what in the implementation
         const float fDelayFactor = 0.0003;
+//        const float fDelayFactor = 0.5;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
@@ -340,6 +338,7 @@ SUITE(Vibrato)
         
         //! this is what in the implementation
         const float fDelayFactor = 0.0003;
+//        const float fDelayFactor = 0.5;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
@@ -371,6 +370,7 @@ SUITE(Vibrato)
         const float fAmplitude = 0;
         
         const float fDelayFactor = 0.0003;
+//        const float fDelayFactor = 0.5;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         float **ppInput1 = newTwoDimensionalArray(iNumChannels, iSize1);

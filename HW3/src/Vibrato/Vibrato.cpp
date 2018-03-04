@@ -68,7 +68,6 @@ Error_t CVibrato::init(float fSampleRate, int iNumChannels, float fModFrequency 
         m_ppCRingBuffer[i] = new CRingBuffer<float>(iDelayLineLength);
         
         //! move the write pointer
-//        m_ppCRingBuffer[i]->setWriteIdx(m_iDelayInSample * fAmplitude);
         m_ppCRingBuffer[i]->setWriteIdx(m_iDelayInSample);
     }
     
@@ -79,7 +78,7 @@ Error_t CVibrato::init(float fSampleRate, int iNumChannels, float fModFrequency 
 
     //! set the value of parameters
     m_afParam[kModulationFrequency] = fModFrequency;
-    m_afParam[kAmplitude] = fAmplitude * m_iDelayInSample;      //!< in sample
+    m_afParam[kAmplitude] = fAmplitude;
     
     m_fSampleRate = fSampleRate;
     m_iNumerOfChannels = iNumChannels;
@@ -130,11 +129,7 @@ Error_t CVibrato::setParam(CVibrato::VibratoParam_t eParam, float fParamValue)
             m_pCLfo->setFrequency(fParamValue);
             break;
         case kAmplitude:
-            for (int i = 0; i < m_iNumerOfChannels; i++) {
-                int iCurrentWriteIndex = m_ppCRingBuffer[i]->getWriteIdx();
-                m_ppCRingBuffer[i]->setWriteIdx((int)(fParamValue * m_iDelayInSample) - m_afParam[eParam] + iCurrentWriteIndex);
-            }
-            m_afParam[eParam] = fParamValue * m_iDelayInSample;
+            m_afParam[eParam] = fParamValue;
             break;
         default:
             return kFunctionInvalidArgsError;
@@ -151,7 +146,7 @@ float CVibrato::getParam(CVibrato::VibratoParam_t eParam)
         case kModulationFrequency:
             return m_afParam[eParam];
         case kAmplitude:
-            return m_afParam[eParam] / m_iDelayInSample;
+            return m_afParam[eParam];
         default:
             return kFunctionIllegalCallError;
     }
@@ -161,26 +156,8 @@ Error_t CVibrato::process(float **ppfInputBuffer, float **ppfOutputBuffer, float
 {
     for (int i = 0; i < iNumberOfFrames; i++) {
         float fSineValue = m_pCLfo->generateNextValue();
-        float fIndexOffset = fSineValue * m_afParam[kAmplitude];
+        float fIndexOffset = fSineValue * m_afParam[kAmplitude] * m_iDelayInSample;
         for (int j = 0; j < m_iNumerOfChannels; j++) {
-//            int iNewWriteInx = (int)(m_ppCRingBuffer[j]->getReadIdx() + m_iDelayInSample + fIndexOffset);
-//            m_ppCRingBuffer[j]->setWriteIdx(iNewWriteInx);
-            
-//            m_ppCRingBuffer[j]->setWriteIdx((int)(m_ppCRingBuffer[j]->getReadIdx() + m_iDelayInSample + fIndexOffset));
-            
-//            float readIdx = m_ppCRingBuffer[j]->getReadIdx();
-//            int delayLength = m_iDelayInSample;
-//            float sinValue = m_pCLfo->generateNextValue();
-//            int ii = i;
-//            int jj = j;
-//            float writeIdx = readIdx + delayLength + sinValue * m_afParam[kAmplitude];
-//            m_ppCRingBuffer[j]->setWriteIdx(writeIdx);
-//            float valueToWrite = ppfInputBuffer[j][i];
-//            float valueToRead = m_ppCRingBuffer[j]->get();
-//
-//            m_ppCRingBuffer[j]->putPostInc(ppfInputBuffer[j][i]);
-//            ppfOutputBuffer[j][i] = m_ppCRingBuffer[j]->getPostInc();
-            
             m_ppCRingBuffer[j]->putPostInc(ppfInputBuffer[j][i]);
             ppfOutputBuffer[j][i] = m_ppCRingBuffer[j]->get(fIndexOffset);
             m_ppCRingBuffer[j]->getPostInc();
@@ -224,17 +201,4 @@ bool CVibrato::isInParamRange(CVibrato::VibratoParam_t eParam, float fValue)
         return true;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
