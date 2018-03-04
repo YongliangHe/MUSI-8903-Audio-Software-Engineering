@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
         ppfAudioData[i] = new float[kBlockSize]();
     
     CVibrato::create(pCVibrato);
-    pCVibrato->init(stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels, 6, 1);
+    pCVibrato->init(stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels, 10, 1);
 
     time = clock();
     //////////////////////////////////////////////////////////////////////////////

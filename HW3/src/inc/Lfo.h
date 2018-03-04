@@ -92,7 +92,7 @@ private:
 //==========================================================
 // public function definitions
 
-Error_t CLfo::create(CLfo *&pCLfo)
+inline Error_t CLfo::create(CLfo *&pCLfo)
 {
     //! in case memory leakage caused by multiple calling to the function
     
@@ -107,7 +107,7 @@ Error_t CLfo::create(CLfo *&pCLfo)
 }
 
 //==========================================================
-Error_t CLfo::destroy(CLfo *&pCLfo)
+inline Error_t CLfo::destroy(CLfo *&pCLfo)
 {
     if (!pCLfo) {
         return kUnknownError;
@@ -120,7 +120,7 @@ Error_t CLfo::destroy(CLfo *&pCLfo)
 }
 
 //==========================================================
-Error_t CLfo::reset()
+inline Error_t CLfo::reset()
 {
     delete m_pCRingbuffer;
     m_pCRingbuffer = 0;
@@ -134,7 +134,7 @@ Error_t CLfo::reset()
 }
 
 //==========================================================
-float CLfo::getFrequency() const
+inline float CLfo::getFrequency() const
 {
     if (!m_bIsInitialized) {
         return kNotInitializedError;
@@ -143,13 +143,13 @@ float CLfo::getFrequency() const
 }
 
 //==========================================================
-CLfo::~CLfo()
+inline CLfo::~CLfo()
 {
     reset();
 }
 
 //==========================================================
-CLfo::CLfo():
+inline CLfo::CLfo():
     m_bIsInitialized(false),
     m_fFrequency(0),
     m_fIncInSample(0),
@@ -159,7 +159,7 @@ CLfo::CLfo():
 {}
 
 //==========================================================
-Error_t CLfo::setFrequency(float fFrequency)
+inline Error_t CLfo::setFrequency(float fFrequency)
 {
     if (!m_bIsInitialized) {
         return kNotInitializedError;
@@ -176,7 +176,7 @@ Error_t CLfo::setFrequency(float fFrequency)
 }
 
 //==========================================================
-Error_t CLfo::init(Waveform eWaveform, float fFrequency, double dSampleRate)
+inline Error_t CLfo::init(Waveform eWaveform, float fFrequency, double dSampleRate)
 {
     reset();
     
@@ -201,7 +201,7 @@ Error_t CLfo::init(Waveform eWaveform, float fFrequency, double dSampleRate)
 }
 
 //==========================================================
-Error_t CLfo::generateNextAudioBlock(float **ppfBufferToFill, int iNumChannels, int iNumberOfFrames)
+inline Error_t CLfo::generateNextAudioBlock(float **ppfBufferToFill, int iNumChannels, int iNumberOfFrames)
 {
     if (!m_bIsInitialized) {
         return kNotInitializedError;
@@ -224,7 +224,7 @@ Error_t CLfo::generateNextAudioBlock(float **ppfBufferToFill, int iNumChannels, 
 
 
 //==========================================================
-float CLfo::generateNextValue()
+inline float CLfo::generateNextValue()
 {
     if (!m_bIsInitialized) {
         return kNotInitializedError;
@@ -242,7 +242,7 @@ float CLfo::generateNextValue()
 }
 //!==========================================================
 //! private function definitions
-void CLfo::writeWaveformToBuffer(Waveform eWaveform)
+inline void CLfo::writeWaveformToBuffer(Waveform eWaveform)
 {
     switch (eWaveform) {
         case kSine:
@@ -255,7 +255,7 @@ void CLfo::writeWaveformToBuffer(Waveform eWaveform)
 }
 
 //==========================================================
-void CLfo::writeSine()
+inline void CLfo::writeSine()
 {
     float angleDelta = 2 * M_PI / BUFFER_LENGTH;
     for (int i = 0; i < BUFFER_LENGTH; i++) {
