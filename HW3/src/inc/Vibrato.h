@@ -90,7 +90,7 @@ private:
      *  since the pitch shift is the difference of the delay length,
      *  this factor used to compute the delay line length
      */
-    const float delayFactor = 0.5;
+    const float delayFactor = 0.0003;
     
     
     bool m_bIsInitialized;  //!< internal bool to check whether the init function has been called

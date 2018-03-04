@@ -6,7 +6,7 @@
 
 #include "AudioFileIf.h"
 #include "Vibrato.h"
-#include "Lfo.h"
+//#include "Lfo.h"
 
 using std::cout;
 using std::endl;
@@ -19,7 +19,7 @@ void    showClInfo ();
 int main(int argc, char* argv[])
 {
     std::string             sInputFilePath,                 //!< file paths
-        sOutputFilePath;
+                            sOutputFilePath;
 
     static const int        kBlockSize = 1024;
 
@@ -30,6 +30,8 @@ int main(int argc, char* argv[])
     CAudioFileIf            *phAudioFile = 0;
     std::fstream            hOutputFile;
     CAudioFileIf::FileSpec_t stFileSpec;
+    
+    CVibrato                *pCVibrato = 0;
 
     showClInfo();
     
@@ -72,7 +74,10 @@ int main(int argc, char* argv[])
     // allocate memory
     ppfAudioData = new float*[stFileSpec.iNumChannels];
     for (int i = 0; i < stFileSpec.iNumChannels; i++)
-        ppfAudioData[i] = new float[kBlockSize];
+        ppfAudioData[i] = new float[kBlockSize]();
+    
+    CVibrato::create(pCVibrato);
+    pCVibrato->init(stFileSpec.fSampleRateInHz, stFileSpec.iNumChannels, 4, 1);
 
     time = clock();
     //////////////////////////////////////////////////////////////////////////////
@@ -81,6 +86,8 @@ int main(int argc, char* argv[])
     {
         long long iNumFrames = kBlockSize;
         phAudioFile->readData(ppfAudioData, iNumFrames);
+        
+        pCVibrato->process(ppfAudioData, ppfAudioData, iNumFrames);
 
         cout << "\r" << "reading and writing";
 

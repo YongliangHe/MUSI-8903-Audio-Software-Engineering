@@ -299,7 +299,7 @@ SUITE(Vibrato)
         const int iSignalLengthInSample = 123;
         
         //! this is what in the implementation
-        const float fDelayFactor = 0.5;
+        const float fDelayFactor = 0.0003;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
@@ -339,7 +339,7 @@ SUITE(Vibrato)
         const int iSignalLengthInSample = 200;
         
         //! this is what in the implementation
-        const float fDelayFactor = 0.5;
+        const float fDelayFactor = 0.0003;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
@@ -370,7 +370,7 @@ SUITE(Vibrato)
         const float fModeFrequency = 2;
         const float fAmplitude = 0;
         
-        const float fDelayFactor = 0.5;
+        const float fDelayFactor = 0.0003;
         const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         float **ppInput1 = newTwoDimensionalArray(iNumChannels, iSize1);
@@ -429,10 +429,6 @@ SUITE(Vibrato)
         const float fModFrequency = 1112;
         const float fAmplitude = 1;
         const int iSignalLengthInSample = 12345;
-        
-        
-        const float fDelayFactor = 0.5;
-        const int iDelayInSample = (int)(fDelayFactor * fSampleRate);
         
         m_pCVibrato->init(fSampleRate, iNumChannels, fModFrequency, fAmplitude);
         
